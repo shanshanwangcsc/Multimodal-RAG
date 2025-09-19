@@ -1,0 +1,61 @@
+#+TITLE: Multimodal RAG
+#+AUTHOR: Shanshan Wang
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+#+OPTIONS: ^:{}
+
+This project builds a multimodal retrieval-augmented generation (RAG) system that works directly on raw PDF files by converting them into images and embedding those images with ColQwen2.5. Unlike previous text-based projects ([[https://github.com/CSCfi/RAG-60K][link]]), here we skip text extraction and instead rely on image embeddings, which helps preserve both visual and layout information (figures, tables, formatting) from scientific papers. This enables multimodal reasoning that combines text and visual context.
+
+This repository not only demonstrates the implementation of a multimodal RAG system, but also emphasizes scalability by leveraging Distributed Data Parallel (DDP), particularly for handling large datasets.
+
+
+* Dataset
+We use the RAG-60K dataset ([[https://github.com/CSCfi/RAG-60K][link]]). For this project, we randomly select 10,000 PDFs from the dataset and operate directly on the raw PDFs.
+
+* Pipeline Overview
+
+** Convert PDFs to Images
+
+Each PDF is split into pages, then converted to high-resolution images (DPI = 300).
+  #+BEGIN_SRC bash
+    sbatch pdf_to_images.sh
+  #+END_SRC
+Example Python snippet (used inside the script):
+  #+BEGIN_SRC python
+    images = convert_from_path(pdf_path,dpi=300, thread_count=8, fmt='png')
+  #+END_SRC
+Total pages after processing: 160,600, which means each pdf has roughly 16 pages on average.
+
+** Embed Images with ColQwen2.5
+
+We embed all pages using ColQwen2.5.
+Since the dataset is rather large, we use Distributed Data Parallel (DDP) across 2 nodes, 16 GPUs on LUMI.
+  #+BEGIN_SRC bash
+    sbatch ingest_ddp_2nodes.sh
+  #+END_SRC
+
+** Merge Embeddings
+Combine all embeddings into a single dataset:
+  #+BEGIN_SRC bash
+    python merge.py
+  #+END_SRC
+
+** Run the Multimodal Chatbot
+Launch the RAG pipeline for multimodal retrieval and generation.
+The chatbot can now answer questions that require both textual and visual reasoning over PDFs (e.g., interpreting tables, figures, or page layouts).
+
+  #+BEGIN_SRC bash
+    python retrieve_and_generate.py
+  #+END_SRC
+
+
+** Notes
+
+- Resolution: Higher DPI (300) improves embedding quality but increases storage.
+- DDP Training: You can adjust the number of GPUs/nodes depending on available resources.
+- Since DDP is designed for training, it doesn’t allow direct DDP wrapping unless one first set requires_grad = False
+
+  #+BEGIN_SRC python
+    for param in model.parameters():
+        param.requires_grad = False
+  #+END_SRC
