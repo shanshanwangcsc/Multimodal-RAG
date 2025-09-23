@@ -21,11 +21,10 @@ class VisualRAG:
 
     def index_documents(self, image_paths):
         """Index documents from a list of image paths"""
-        # images = [Image.open(path) for path in image_paths]
-        image_files = [f for f in os.listdir(image_paths) if f.endswith('.png')]
 
-        images= [Image.open(os.path.join(image_paths, f))
-                  for f in os.listdir(image_paths) if f.endswith('.png')]
+        image_files = [f for f in os.listdir(image_paths) if f.endswith('.png')]
+        images = [Image.open(os.path.join(image_paths, f)) for f in image_files]
+
         self.indexed_images = images
         self.filenames=image_files
 
