@@ -1,0 +1,7 @@
+#+TITLE: Multimodal RAG demo
+#+AUTHOR: Shanshan Wang
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+#+OPTIONS: ^:{}
+
+This project shows a simple demo on multimodal retrieval-augmented generation (RAG) system that works directly on raw PDF files by converting them into images.
