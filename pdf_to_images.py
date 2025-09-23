@@ -47,6 +47,6 @@ def convert_pdfs_to_images_parallel(source_folder, output_folder):
 
 
 if __name__ == "__main__":
-    source_folder = './ambassador.pdf'
+    source_folder = './pdfs/'
     output_folder = './images'
     convert_pdfs_to_images_parallel(source_folder, output_folder)
