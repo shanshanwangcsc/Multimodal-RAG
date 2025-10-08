@@ -4,4 +4,28 @@
 #+OPTIONS: num:nil
 #+OPTIONS: ^:{}
 
-This project shows a simple demo on multimodal retrieval-augmented generation (RAG) system that works directly on raw PDF files by converting them into images.
+This project presents a simple demonstration of a multimodal retrieval-augmented generation (RAG) system that operates directly on raw PDF files by converting them into images. Additionally, it provides a comparison between a text-only RAG and a multimodal RAG approach.
+
+* Run the Text-Based RAG Demo on LUMI
+#+BEGIN_SRC bash
+    module use /appl/local/csc/modulefiles/
+    module load pytorch/2.7
+    export SING_IMAGE='/scratch/project_462000824/shanshan/csc-popper.sif'
+    export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
+    mkdir -p $HF_HOME
+    srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
+    source RAG-env/bin/activate
+    python Normal_RAG.py
+#+END_SRC
+
+* Run the Multimodal RAG Demo on LUMI
+#+BEGIN_SRC bash
+    module use /appl/local/csc/modulefiles/
+    module load pytorch/2.7
+    export SING_IMAGE='/scratch/project_462000824/shanshan/csc-popper.sif'
+    export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
+    mkdir -p $HF_HOME
+    srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
+    source RAG-env/bin/activate
+    python Visual_RAG.py
+#+END_SRC
