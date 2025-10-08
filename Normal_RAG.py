@@ -128,4 +128,4 @@ demo.launch(share=True)
 # export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
 # mkdir -p $HF_HOME
 # srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
-# python singlemodal_chatbot.py
+# python Normal_RAG.py
