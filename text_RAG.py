@@ -102,7 +102,7 @@ def chatbot(user_input, history):
     return history, history
 
 with gr.Blocks() as demo:
-    gr.Markdown("# 📄 RAG with Qwen2.5 + ChromaDB")
+    gr.Markdown("# 📄 text-only RAG with Qwen2.5 LLM")
 
     with gr.Row():
         pdf_upload = gr.File(label="Upload a PDF", file_types=[".pdf"])

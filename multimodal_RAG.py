@@ -160,7 +160,7 @@ def chat_fn(query, history):
 
 
 with gr.Blocks() as demo:
-    gr.Markdown("# 📚 Visual RAG with Qwen2.5-VL + ColQwen2.5")
+    gr.Markdown("# 📚 Multimodal RAG with ColQwen2.5 + Qwen2.5-VL")
 
     with gr.Row():
         file_input = gr.File(label="Upload PDF or image folder", type="filepath")
