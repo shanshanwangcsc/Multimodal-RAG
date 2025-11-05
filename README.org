@@ -10,7 +10,7 @@ This project presents a simple demonstration of a multimodal retrieval-augmented
 #+BEGIN_SRC bash
     module use /appl/local/csc/modulefiles/
     module load pytorch/2.7
-    export SING_IMAGE='/scratch/project_462000824/shanshan/csc-popper.sif'
+    export SING_IMAGE='/scratch/project_462000824/shanshan/containers/csc-poppler.sif'
     export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
     mkdir -p $HF_HOME
     srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
@@ -22,7 +22,7 @@ This project presents a simple demonstration of a multimodal retrieval-augmented
 #+BEGIN_SRC bash
     module use /appl/local/csc/modulefiles/
     module load pytorch/2.7
-    export SING_IMAGE='/scratch/project_462000824/shanshan/csc-popper.sif'
+    export SING_IMAGE='/scratch/project_462000824/shanshan/containers/csc-poppler.sif'
     export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
     mkdir -p $HF_HOME
     srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
