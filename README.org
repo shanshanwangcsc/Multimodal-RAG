@@ -5,27 +5,39 @@
 #+OPTIONS: ^:{}
 
 This project presents a simple demonstration of a multimodal retrieval-augmented generation (RAG) system that operates directly on raw PDF files by converting them into images. Additionally, it provides a comparison between a text-only RAG and a multimodal RAG approach.
+* Clone this repo
+
+#+BEGIN_SRC bash
+  git clone git@github.com:shanshanwangcsc/Multimodal-RAG.git
+  cd Multimodal-RAG
+  git switch demo
+#+END_SRC
+
+* Download the container
+The needed python packages to run this demo are stored inside a container. One can download the container from this public link [[https://462000824.lumidata.eu/mybuck/my_container.sif][here]].
+
+#+BEGIN_SRC bash
+  wget https://462000824.lumidata.eu/mybuck/my_container.sif
+#+END_SRC
 
 * Run the Text-Based RAG Demo on LUMI
 #+BEGIN_SRC bash
-    module use /appl/local/csc/modulefiles/
-    module load pytorch/2.7
-    export SING_IMAGE='/scratch/project_462000824/shanshan/containers/csc-poppler.sif'
-    export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
-    mkdir -p $HF_HOME
-    srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
-    source RAG-env/bin/activate
-    python text_RAG.py
+  module use /appl/local/csc/modulefiles/
+  module load pytorch/2.7
+  export SING_IMAGE='/scratch/project_462000824/shanshan/Multimodal-RAG/my_container.sif' # change the project number to yours
+  export HF_HOME="/scratch/project_462000824/${USER}/hf-cache" # change the project number to yours
+  mkdir -p $HF_HOME
+  srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash # change the project number to yours
+  python text_RAG.py
 #+END_SRC
 
 * Run the Multimodal RAG Demo on LUMI
 #+BEGIN_SRC bash
     module use /appl/local/csc/modulefiles/
     module load pytorch/2.7
-    export SING_IMAGE='/scratch/project_462000824/shanshan/containers/csc-poppler.sif'
-    export HF_HOME="/scratch/project_462000824/${USER}/hf-cache"
+    export SING_IMAGE='/scratch/project_462000824/shanshan/Multimodal-RAG/my_container.sif' # change the project number to yours
+    export HF_HOME="/scratch/project_462000824/${USER}/hf-cache" # change the project number to yours
     mkdir -p $HF_HOME
-    srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash
-    source RAG-env/bin/activate
+    srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash # change the project number to yours
     python multimodal_RAG.py
 #+END_SRC
