@@ -120,7 +120,8 @@ class VisualRAG:
 print("Loading ColQwen2.5 retriever...")
 retriever_model = ColQwen2_5.from_pretrained(
     "vidore/colqwen2.5-v0.2",
-    torch_dtype=torch.bfloat16,
+    #torch_dtype=torch.bfloat16,
+    dtype=torch.bfloat16,
     device_map="cuda:0",
     attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
 ).eval()
@@ -129,7 +130,8 @@ retriever_processor = ColQwen2_5_Processor.from_pretrained("vidore/colqwen2.5-v0
 print("Loading Qwen2.5-VL for QA...")
 vl_model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
     "Qwen/Qwen2.5-VL-7B-Instruct",
-    torch_dtype=torch.bfloat16,
+    #torch_dtype=torch.bfloat16,
+    dtype=torch.bfloat16,
     device_map="auto",
     attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
 )
@@ -147,17 +149,59 @@ def upload_and_index(file):
     return f"✅ Indexed {count} document pages."
 
 
+# def chat_fn(query, history):
+#     if not query.strip():
+#         return history, history
+#     start = time.perf_counter()
+#     answer, docs = visual_rag.answer_query(query, k=3)
+#     end = time.perf_counter()
+
+#     retrieved_previews = [f"{d['filename']} (score={d['score']:.3f})" for d in docs]
+#     history = history + [(query, f"{answer}\n\nRetrieved: {retrieved_previews}\n⏱ {end-start:.2f}s")]
+#     return history, history
+
+# ---------- Gradio Chat Function ----------
+from gradio import ChatMessage
+
 def chat_fn(query, history):
     if not query.strip():
         return history, history
+
     start = time.perf_counter()
     answer, docs = visual_rag.answer_query(query, k=3)
     end = time.perf_counter()
 
-    retrieved_previews = [f"{d['filename']} (score={d['score']:.3f})" for d in docs]
-    history = history + [(query, f"{answer}\n\nRetrieved: {retrieved_previews}\n⏱ {end-start:.2f}s")]
+    # Build retrieved preview list
+    retrieved_previews = "\n".join([f"- {d['filename']} (score={d['score']:.3f})" for d in docs])
+    bot_content = f"{answer}\n\nRetrieved documents:\n{retrieved_previews}\n⏱ {end-start:.2f}s"
+
+    # Initialize history as a list of dicts with 'role' and 'content'
+    if history is None:
+        history = []
+
+    history.append({"role": "user", "content": query})
+    history.append({"role": "assistant", "content": bot_content})
+
     return history, history
 
+
+# with gr.Blocks() as demo:
+#     gr.Markdown("# 📚 Multimodal RAG with ColQwen2.5 + Qwen2.5-VL")
+
+#     with gr.Row():
+#         file_input = gr.File(label="Upload PDF or image folder", type="filepath")
+#         status = gr.Label()
+
+#     chatbot_ui = gr.Chatbot([], elem_id="chatbot")
+#     msg = gr.Textbox(placeholder="Ask a question about the document...")
+#     clear = gr.Button("Clear Chat")
+#     state = gr.State([])
+
+#     file_input.upload(upload_and_index, file_input, status)
+#     msg.submit(chat_fn, [msg, state], [chatbot_ui, state])
+#     clear.click(lambda: ([], []), None, [chatbot_ui, state])
+
+# demo.launch(share=True)
 
 with gr.Blocks() as demo:
     gr.Markdown("# 📚 Multimodal RAG with ColQwen2.5 + Qwen2.5-VL")
@@ -166,13 +210,13 @@ with gr.Blocks() as demo:
         file_input = gr.File(label="Upload PDF or image folder", type="filepath")
         status = gr.Label()
 
-    chatbot_ui = gr.Chatbot([], elem_id="chatbot")
+    chatbot_ui = gr.Chatbot([], elem_id="chatbot")  # new messages format
     msg = gr.Textbox(placeholder="Ask a question about the document...")
     clear = gr.Button("Clear Chat")
-    state = gr.State([])
+    state = gr.State([])  # history as list of dicts
 
     file_input.upload(upload_and_index, file_input, status)
     msg.submit(chat_fn, [msg, state], [chatbot_ui, state])
-    clear.click(lambda: ([], []), None, [chatbot_ui, state])
+    clear.click(lambda: [], None, [chatbot_ui, state])
 
 demo.launch(share=True)
