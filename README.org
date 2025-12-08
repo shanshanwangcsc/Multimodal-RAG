@@ -20,7 +20,7 @@ The needed python packages to run this demo are stored inside a container. One c
   wget https://462000824.lumidata.eu/mybuck/my_container.sif
 #+END_SRC
 
-* Run the Text-Based RAG Demo on LUMI
+* Run the Text-Based/Multimodal RAG Demo on LUMI
 #+BEGIN_SRC bash
   module use /appl/local/csc/modulefiles/
   module load pytorch/2.7
@@ -28,16 +28,27 @@ The needed python packages to run this demo are stored inside a container. One c
   export HF_HOME="/scratch/project_462000824/${USER}/hf-cache" # change the project number to yours
   mkdir -p $HF_HOME
   srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash # change the project number to yours
-  python text_RAG.py
+  python text_RAG.py /  python multimodal_RAG.py
 #+END_SRC
 
-* Run the Multimodal RAG Demo on LUMI
+* Accessing gradio Apps remotely
+
+** Find the Compute Node Name
+After submitting your job (e.g., using sbatch or an interactive session like srun), you must know the exact hostname of the GPU node where Gradio is running (e.g., nid00***).
+** Run the Chained Tunnel Command On Your Local Machine
 #+BEGIN_SRC bash
-    module use /appl/local/csc/modulefiles/
-    module load pytorch/2.7
-    export SING_IMAGE='/scratch/project_462000824/shanshan/Multimodal-RAG/my_container.sif' # change the project number to yours
-    export HF_HOME="/scratch/project_462000824/${USER}/hf-cache" # change the project number to yours
-    mkdir -p $HF_HOME
-    srun --account=project_462000824 --partition=dev-g --ntasks=1 --cpus-per-task=14 --gpus-per-node=1 --mem=160G --time=02:30:00 --nodes=1 --pty bash # change the project number to yours
-    python multimodal_RAG.py
+  ssh -L [Local_Port]:[GPU_Node_Name]:[GPU_Node_Port] [User]@[Login_Node_IP]
+  e.g., ssh -L 7860:nid002345:7860 <username>@lumi.csc.fi
 #+END_SRC
+| 7860 (1st): | Local Port | The port on your local computer where you access the app (localhost:7860) |
+
+| nid002345:              | Target Host | The hostname of the GPU node where Gradio is running. |
+| 7860 (2nd):             | Remote Port | The port on the GPU node where Gradio is listening.   |
+| <username>@lumi.csc.fi: | Destination | Your regular login to the Login Node.                 |
+
+** Access Gradio
+With the chained SSH tunnel running in a dedicated terminal window on your local machine, you can now open your browser and navigate to:
+#+BEGIN_SRC bash
+  http://localhost:7860
+#+END_SRC
+This request is forwarded to the Login Node, which then forwards it to the GPU Node, bypassing the network restrictions between them.
