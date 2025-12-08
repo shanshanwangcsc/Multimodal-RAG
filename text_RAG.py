@@ -161,4 +161,5 @@ with gr.Blocks() as demo:
     msg.submit(chatbot, [msg, state], [chatbot_ui, state], concurrency_limit=1)
     clear.click(lambda: ([], []), None, [chatbot_ui, state])
 
-demo.launch(share=True)
+
+demo.launch(server_name="0.0.0.0", server_port=7860)

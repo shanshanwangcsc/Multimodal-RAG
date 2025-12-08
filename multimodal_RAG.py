@@ -149,17 +149,6 @@ def upload_and_index(file):
     return f"✅ Indexed {count} document pages."
 
 
-# def chat_fn(query, history):
-#     if not query.strip():
-#         return history, history
-#     start = time.perf_counter()
-#     answer, docs = visual_rag.answer_query(query, k=3)
-#     end = time.perf_counter()
-
-#     retrieved_previews = [f"{d['filename']} (score={d['score']:.3f})" for d in docs]
-#     history = history + [(query, f"{answer}\n\nRetrieved: {retrieved_previews}\n⏱ {end-start:.2f}s")]
-#     return history, history
-
 # ---------- Gradio Chat Function ----------
 from gradio import ChatMessage
 
@@ -185,23 +174,6 @@ def chat_fn(query, history):
     return history, history
 
 
-# with gr.Blocks() as demo:
-#     gr.Markdown("# 📚 Multimodal RAG with ColQwen2.5 + Qwen2.5-VL")
-
-#     with gr.Row():
-#         file_input = gr.File(label="Upload PDF or image folder", type="filepath")
-#         status = gr.Label()
-
-#     chatbot_ui = gr.Chatbot([], elem_id="chatbot")
-#     msg = gr.Textbox(placeholder="Ask a question about the document...")
-#     clear = gr.Button("Clear Chat")
-#     state = gr.State([])
-
-#     file_input.upload(upload_and_index, file_input, status)
-#     msg.submit(chat_fn, [msg, state], [chatbot_ui, state])
-#     clear.click(lambda: ([], []), None, [chatbot_ui, state])
-
-# demo.launch(share=True)
 
 with gr.Blocks() as demo:
     gr.Markdown("# 📚 Multimodal RAG with ColQwen2.5 + Qwen2.5-VL")
@@ -219,4 +191,4 @@ with gr.Blocks() as demo:
     msg.submit(chat_fn, [msg, state], [chatbot_ui, state])
     clear.click(lambda: [], None, [chatbot_ui, state])
 
-demo.launch(share=True)
+demo.launch(server_name="0.0.0.0", server_port=7860)
